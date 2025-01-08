@@ -1,99 +1,135 @@
 
-# Lighthouse Desktop Audit with Puppeteer
+# Lighthouse Audit with Puppeteer
 
-This project automates a Lighthouse audit for desktop accessibility using Puppeteer for authentication and navigation. It generates an HTML report for accessibility analysis.
+This project automates Lighthouse audits for both mobile and desktop platforms using Puppeteer. It supports optional authentication, dynamic platform selection, and configurable report formats. The reports are stored in a `reports` directory, which is mounted as a Docker volume.
 
 ## Features
-- Automates login to websites requiring authentication.
-- Runs Lighthouse audits in desktop mode.
-- Outputs an HTML accessibility report.
+- Run Lighthouse audits for mobile, desktop, or both platforms.
+- Optional login support using credentials.
+- Customizable Lighthouse categories for audits.
+- Configurable report formats: HTML (default), JSON, or CSV.
+- Saves reports in a mounted `reports` folder.
 
 ## Prerequisites
-- [Node.js](https://nodejs.org) (version 14 or higher)
-- npm (Node Package Manager)
+- [Docker](https://www.docker.com) installed on your machine.
 
 ## Installation
 
-1. Clone the repository or download the source files:
+1. Clone the repository:
    ```bash
-   git clone https://github.com/sqerison/lighthouse-desktop-audit.git
-   cd lighthouse-desktop-audit
+   git clone https://github.com/your-username/lighthouse-audit.git
+   cd lighthouse-audit
    ```
 
-2. Install the required dependencies:
+2. Build the Docker image:
    ```bash
-   npm install
+   docker build -t lighthouse-audit .
    ```
 
 ## Usage
 
-1. **Configure the URL and Login Credentials**:
-   Open `audit.js` and replace placeholders for website URL and your login credentials and selectors:
-   ```javascript
-   await page.goto('https://example.com');
-   await page.type('input[name="replace-me-with-your-login-imput-name"]', 'your-username');
-   await page.type('input[name="replace-me-with-your-password-imput-name"]', 'your-password');
-   await page.click('input[name="submit"]'); // please also check whether the submit button has the same name and if not, please adjust.
-   ```
+### Run Without Authentication
+To run the audit without login credentials:
+```bash
+docker run --rm \
+  -v $(pwd)/reports:/usr/src/app/reports \
+  -e SITE_URL="https://google.com" \
+  lighthouse-audit
+```
 
-2. **Run the Audit**:
-   Start the script:
-   ```bash
-   npm start
-   ```
+### Run With Authentication
+To run the audit with login credentials:
+```bash
+docker run --rm \
+  -v $(pwd)/reports:/usr/src/app/reports \
+  -e SITE_URL="https://google.com" \
+  -e USERNAME="your-username" \
+  -e PASSWORD="your-password" \
+  -e USERNAME_FIELD="input[name='login']" \
+  -e PASSWORD_FIELD="input[name='password']" \
+  -e SUBMIT_BUTTON="input[name='submit']" \
+  lighthouse-audit
+```
 
-3. **View the Report**:
-   After the audit completes, an HTML report will be generated in the project directory:
-   ```
-   lighthouse-report.html
-   ```
+### Run for Specific Platforms
+By default, the audit runs for both mobile and desktop. To specify a platform:
+- **Desktop only**:
+  ```bash
+  docker run --rm \
+    -v $(pwd)/reports:/usr/src/app/reports \
+    -e SITE_URL="https://example.com"  \
+    -e PLATFORM="desktop" \
+    lighthouse-audit
+  ```
+
+- **Mobile only**:
+  ```bash
+  docker run --rm \
+    -v $(pwd)/reports:/usr/src/app/reports \
+    -e SITE_URL="https://example.com" \
+    -e PLATFORM="mobile" \
+    lighthouse-audit
+  ```
+
+### Run With Custom Categories
+To customize Lighthouse categories, use the `CATEGORIES` environment variable:
+```bash
+docker run --rm \
+  -v $(pwd)/reports:/usr/src/app/reports \
+  -e SITE_URL="https://example.com" \
+  -e CATEGORIES="performance,accessibility" \
+  lighthouse-audit
+```
+
+### Generate Reports in Specific Formats
+The default report format is `html`. Other types could be specified as: `html`, `json`, `csv`.
+To specify a different format:
+- **JSON Report**:
+  ```bash
+  docker run --rm \
+    -v $(pwd)/reports:/usr/src/app/reports \
+  -e SITE_URL="https://example.com" \
+  -e REPORT_TYPE="json" \
+  lighthouse-audit
+  ```
 
 ## Configuration
 
-### Lighthouse Settings
-The Lighthouse audit is configured to run in desktop mode with the following parameters:
-- Screen dimensions: 1920x1080
-- Categories: Accessibility
+### Environment Variables
 
-If you wish to customize these settings, edit the configuration in `audit.js`:
-```javascript
-const result = await lighthouse.default(page.url(), {
-    port: new URL(browser.wsEndpoint()).port,
-    output: 'html',
-    onlyCategories: ['accessibility'],
-    formFactor: 'desktop',
-    screenEmulation: {
-        mobile: false,
-        width: 1920,
-        height: 1080,
-        deviceScaleFactor: 1,
-        disabled: false,
-    },
-});
-```
+| Variable        | Default Value              | Description                                      |
+|------------------|----------------------------|--------------------------------------------------|
+| `SITE_URL`       | `https://google.com`       | URL to audit (login or main page).              |
+| `USERNAME`       | None                       | Username for login (optional).                  |
+| `PASSWORD`       | None                       | Password for login (optional).                  |
+| `USERNAME_FIELD` | `input[name='login']`      | Selector for the username field.                |
+| `PASSWORD_FIELD` | `input[name='password']`   | Selector for the password field.                |
+| `SUBMIT_BUTTON`  | `input[name='submit']`     | Selector for the login button.                  |
+| `CATEGORIES`     | All categories             | Comma-separated list of categories to audit.    |
+| `PLATFORM`       | `both`                     | Platform to audit: `mobile`, `desktop`, or `both`. |
+| `REPORT_TYPE`    | `html`                     | Report format: `html`, `json`, or `csv`.        |
+| `REPORT_DIR`     | `./reports`                | Directory to save the Lighthouse report.        |
 
-## Dependencies
-- [Puppeteer](https://github.com/puppeteer/puppeteer) - For browser automation.
-- [Lighthouse](https://github.com/GoogleChrome/lighthouse) - For auditing.
+### Lighthouse Categories
+- `performance`: Page load speed and efficiency.
+- `accessibility`: Compliance with web accessibility best practices.
+- `best-practices`: Web development best practices.
+- `seo`: Search engine optimization.
+- `pwa`: Progressive Web App standards.
 
-## Troubleshooting
+## Output
 
-1. **Error: `ERR_REQUIRE_ESM`**:
-   Ensure you are using ES Modules by setting `"type": "module"` in `package.json`.
+Reports are saved in the `reports` folder with filenames based on the platform and format:
+- `lighthouse-report-desktop.html`
+- `lighthouse-report-mobile.html`
+- `lighthouse-report-desktop.json`
+- `lighthouse-report-mobile.csv`
+(Depending on the `REPORT_TYPE` specified.)
 
-2. **Login Fails**:
-   - Verify the username and password are correct.
-   - Update the selectors for the login fields if they change.
-
-3. **Report Not Generated**:
-   - Ensure the URL used after login is correct.
-   - Check for any errors in the console during execution.
+Ensure the `reports` folder is mounted as a Docker volume for easy access.
 
 ## License
 This project is licensed under the MIT License.
 
-## Contributing
-Feel free to submit issues or pull requests to improve this tool.
-
 ## Contact
-For further inquiries, please contact [Your Email] or open an issue in the repository.
+For inquiries or issues, please contact [volodymyr@apprecode.com](mailto:volodymyr@apprecode.com) or open an issue in the repository.
