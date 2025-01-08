@@ -23,7 +23,7 @@ This project automates Lighthouse audits for both mobile and desktop platforms u
 
 2. Build the Docker image:
    ```bash
-   docker build -t lighthouse-audit .
+   docker build -t sqerison/lighthouse-audit .
    ```
 
 ## Usage
@@ -34,7 +34,7 @@ To run the audit without login credentials:
 docker run --rm \
   -v $(pwd)/reports:/usr/src/app/reports \
   -e SITE_URL="https://google.com" \
-  lighthouse-audit
+  sqerison/lighthouse-audit
 ```
 
 ### Run With Authentication
@@ -48,7 +48,7 @@ docker run --rm \
   -e USERNAME_FIELD="input[name='login']" \
   -e PASSWORD_FIELD="input[name='password']" \
   -e SUBMIT_BUTTON="input[name='submit']" \
-  lighthouse-audit
+  sqerison/lighthouse-audit
 ```
 
 ### Run for Specific Platforms
@@ -59,7 +59,7 @@ By default, the audit runs for both mobile and desktop. To specify a platform:
     -v $(pwd)/reports:/usr/src/app/reports \
     -e SITE_URL="https://example.com"  \
     -e PLATFORM="desktop" \
-    lighthouse-audit
+    sqerison/lighthouse-audit
   ```
 
 - **Mobile only**:
@@ -68,7 +68,7 @@ By default, the audit runs for both mobile and desktop. To specify a platform:
     -v $(pwd)/reports:/usr/src/app/reports \
     -e SITE_URL="https://example.com" \
     -e PLATFORM="mobile" \
-    lighthouse-audit
+    sqerison/lighthouse-audit
   ```
 
 ### Run With Custom Categories
@@ -78,7 +78,7 @@ docker run --rm \
   -v $(pwd)/reports:/usr/src/app/reports \
   -e SITE_URL="https://example.com" \
   -e CATEGORIES="performance,accessibility" \
-  lighthouse-audit
+  sqerison/lighthouse-audit
 ```
 
 ### Generate Reports in Specific Formats
@@ -90,7 +90,7 @@ To specify a different format:
     -v $(pwd)/reports:/usr/src/app/reports \
   -e SITE_URL="https://example.com" \
   -e REPORT_TYPE="json" \
-  lighthouse-audit
+  sqerison/lighthouse-audit
   ```
 
 ## Configuration
