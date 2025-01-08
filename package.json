@@ -11,15 +11,16 @@
     "lighthouse",
     "puppeteer",
     "accessibility",
-    "desktop-audit"
+    "desktop-audit",
+    "dotenv"
   ],
   "author": "Volodymyr Shynkar",
   "license": "MIT",
   "dependencies": {
-    "lighthouse": "^12.3.0",
-    "puppeteer": "^23.11.1",
     "chrome-launcher": "^1.1.2",
-    "fs": "^0.0.1-security"
-  },
-  "devDependencies": {}
+    "dotenv": "^16.4.7",
+    "fs": "^0.0.1-security",
+    "lighthouse": "^12.3.0",
+    "puppeteer": "^23.11.1"
+  }
 }

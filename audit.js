@@ -1,7 +1,11 @@
 import puppeteer from 'puppeteer';
 import { writeFile } from 'fs/promises';
 import lighthouse from 'lighthouse';
+import dotenv from 'dotenv';
 import path from 'path';
+
+// Load .env variables
+dotenv.config();
 
 (async () => {
     // Retrieve environment variables or use defaults
