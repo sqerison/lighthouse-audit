@@ -1,6 +1,6 @@
 # Lighthouse Audit with Puppeteer
 
-This project automates Lighthouse audits for both mobile and desktop platforms using Puppeteer. It supports optional authentication, dynamic platform selection, and configurable report formats. The reports are stored in a `reports` directory, which is mounted as a Docker volume.
+This project automates Lighthouse audits for both mobile and desktop platforms using Puppeteer and further used inside the CI for performance checking. It supports optional authentication, dynamic platform selection, and configurable report formats. The reports are stored in a `reports` directory, which is mounted as a Docker volume.
 
 ### WARNING: docker doesn't work on the Apple Silicon processors. Please run using node.js directly.
 ## Features
